@@ -30,7 +30,7 @@ variable "region" {
 
 variable "zones" {
   description = "The GCP zone to deploy gke into"
-  default     = ["europe-west1-a"]
+  default     = ["europe-west1-b"]
 }
 
 variable "ip_range_pods_name" {
