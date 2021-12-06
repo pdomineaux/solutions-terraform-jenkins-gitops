@@ -80,6 +80,11 @@ controller:
   JCasC:
     enabled: true
     configScripts:
+        welcome-message: |
+          jenkins:
+            systemMessage: Welcome to our CI\CD server.  This Jenkins is configured and managed 'as code'.
+        # Ignored if securityRealm is defined in controller.JCasC.configScripts and
+        # ignored if controller.enableXmlConfig=true as controller.securityRealm takes precedence
         cloud: |
             jenkins:
                 clouds:
@@ -87,7 +92,7 @@ controller:
                         name: "gke-executors"
                         serverUrl: "https://kubernetes.default"
                         jenkinsTunnel: "jenkins-agent:50000"
-                        jenkinsUrl: "http://jenkins:80"
+                        jenkinsUrl: "http://jenkins:8080"
                         skipTlsVerify: true
                         namespace: "default"
                         templates:
@@ -149,32 +154,47 @@ controller:
                             username: ${GITHUB_USERNAME}
                             password: ${GITHUB_TOKEN}
                             description: "Github personal token"
-        init-jobs: |
-            jobs:
-              - script: >
-                    multibranchPipelineJob('terraform-jenkins-create-demo') {
-                        factory {
-                        workflowBranchProjectFactory {
-                            scriptPath('example-pipelines/environments/Jenkinsfile')
-                        }
-                        }
-                        branchSources {
-                        github {
-                            id('12312313')
-                            scanCredentialsId('github-token')
-                            repoOwner("${GITHUB_USERNAME}")
-                            repository("${GITHUB_REPO}")
-                            buildOriginBranch(true)
-                            buildOriginPRMerge(true)
-                            includes("dev prod PR*")
-                        }
-                        }
-                        orphanedItemStrategy {
-                        discardOldItems {
-                            numToKeep(10)
-                        }
-                        }
-                        triggers {
-                        periodic(1)
-                        }
-                    }
+#        init-jobs: |
+#            jobs:
+#              - script: >
+#                    multibranchPipelineJob('terraform-jenkins-create-demo') {
+#                        factory {
+#                        workflowBranchProjectFactory {
+#                            scriptPath('example-pipelines/environments/Jenkinsfile')
+#                        }
+#                        }
+#                        branchSources {
+#                        github {
+#                            id('12312313')
+#                            scanCredentialsId('github-token')
+#                            repoOwner("${GITHUB_USERNAME}")
+#                            repository("${GITHUB_REPO}")
+#                            buildOriginBranch(true)
+#                            buildOriginPRMerge(true)
+#                            includes("dev prod PR*")
+#                        }
+#                        }
+#                        orphanedItemStrategy {
+#                        discardOldItems {
+#                            numToKeep(10)
+#                        }
+#                        }
+#                        triggers {
+#                        periodic(1)
+#                        }
+#                    }
+#              - script: >
+#                  job('Job_DSL_Seed') {
+#                    scm {
+#                      git {
+#                        remote {
+#                          url 'ssh://git.example.com/project/jenkins-jobs.git'
+#                        }
+#                      }
+#                    }
+#                    steps {
+#                      jobDsl {
+#                        targets 'jobs/**/*.groovy'
+#                      }
+#                    }
+#                  }
