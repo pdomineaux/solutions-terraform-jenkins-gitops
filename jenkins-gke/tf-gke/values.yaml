@@ -53,10 +53,6 @@ controller:
     - configuration-as-code:1.55 
     - credentials:2.6.2
     - credentials-binding:1.27
-    - docker-commons:1.17
-    - docker-plugin:1.2.3
-    - docker-workflow:1.26
-    - docker-custom-build-environment:1.7.3
     - kubernetes:1.26.2
     - workflow-aggregator:2.6
     - workflow-job:2.42
@@ -75,6 +71,11 @@ controller:
     - jira:3.6
     - jdk-tool:1.5
     - terraform:1.0.10
+
+  #  - docker-commons:1.17
+  #  - docker-plugin:1.2.3
+  #  - docker-workflow:1.26
+  #  - docker-custom-build-environment:1.7.3
     
 
   JCasC:
