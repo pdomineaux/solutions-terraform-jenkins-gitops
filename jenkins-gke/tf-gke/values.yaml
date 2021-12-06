@@ -55,6 +55,7 @@ controller:
     - credentials-binding:1.27
     - docker-build-step:2.8
     - docker-commons:1.17
+    - docker-plugin:1.2.3
     - kubernetes:1.26.2
     - workflow-aggregator:2.6
     - workflow-job:2.42
