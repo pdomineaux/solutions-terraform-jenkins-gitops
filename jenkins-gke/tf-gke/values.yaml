@@ -53,7 +53,6 @@ controller:
     - configuration-as-code:1.55 
     - credentials:2.6.2
     - credentials-binding:1.27
-    - docker-build-step:2.8
     - docker-commons:1.17
     - docker-plugin:1.2.3
     - kubernetes:1.26.2
@@ -79,16 +78,55 @@ controller:
   #  - docker-plugin:1.2.3
   #  - docker-workflow:1.26
   #  - docker-custom-build-environment:1.7.3
-    
+  #  - docker-build-step:2.8
+
+  jenkinsUrlProtocol: "https"
+  # If you are not using the provided ingress you can specify `controller.jenkinsUrl` to change the url definition.
+  jenkinsUrl: "https://jenkins.apps.p3lab.com"
+
+  additionalExistingSecrets:
+    - name: azure-auth-secret
+      keyName: clientid
+    - name: azure-auth-secret
+      keyName: clientsecret
+    - name: azure-auth-secret
+      keyName: tenant
 
   JCasC:
+    defaultConfig: false
     enabled: true
+    securityRealm: |-
+      azure:
+        cacheDuration: 3600
+        clientId: ${azure-auth-secret-clientid}
+        clientSecret: ${azure-auth-secret-clientsecret}
+        tenant: ${azure-auth-secret-tenant}
+    authorizationStrategy: |-
+      loggedInUsersCanDoAnything:
+        allowAnonymousRead: false
+    authorizationStrategy: |-
+      azureAdMatrix:
+        permissions:
+        - "Overall/Administer:jenkins-admins (46f5262d-9427-4aca-8bbb-7da99bd9a405)"
+    nodes: |-
+      - permanent:
+          labelString: "docker linux test"
+          launcher:
+            ssh:
+              credentialsId: "jenkins-ssh-master-slave"
+              host: "10.0.0.8"
+              port: 22
+              sshHostKeyVerificationStrategy: "nonVerifyingKeyVerificationStrategy"
+          name: "DockerEngineUbuntu"
+          nodeDescription: "DockerEngineUbuntu"
+          numExecutors: 2
+          remoteFS: "/home/jenkins"
+          retentionStrategy: "always"
     configScripts:
         welcome-message: |
           jenkins:
-            systemMessage: Welcome to our CI\CD server.  This Jenkins is configured and managed 'as code'.
-        # Ignored if securityRealm is defined in controller.JCasC.configScripts and
-        # ignored if controller.enableXmlConfig=true as controller.securityRealm takes precedence
+            systemMessage: Welcome to our CI\CD server.  This Jenkins is configured and managed 'as code' by PDO.
+
         cloud: |
             jenkins:
                 clouds:
